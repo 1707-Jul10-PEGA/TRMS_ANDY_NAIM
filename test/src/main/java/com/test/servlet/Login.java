@@ -2,6 +2,13 @@ package com.test.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,53 +16,76 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.test.bean.formBean;
+import com.test.bean.userBean;
 import com.test.utility.Validate;
+import com.test.utility.userStuff;
 
 /**
  * Servlet implementation class Login
  */
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Login() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public Login() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("////////////////////////in login////////////////////////////");
+		Connection conn = null;
+		CallableStatement cs = null;
+		RequestDispatcher rs = null;
+		ResultSet rs1 = null;
+		try {
+			conn = DriverManager.getConnection(
+					"jdbc:oracle:thin:@mydbinstance.cusjmyq1pvmz.us-east-1.rds.amazonaws.com:1521:ORCL",
+					"revatureWongs", "databasePoppop13");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		String first = request.getParameter("firstname");
 		String last = request.getParameter("lastname");
-		System.out.println("////////////////////////" + first);
-		System.out.println("////////////////////////" + last);
-		
-		
-			if(Validate.checkUser(first, last)){
-				RequestDispatcher rs = request.getRequestDispatcher("userhome.html");
-				rs.forward(request, response);
-			} else{
-				out.println("Username or Password Incorrect");
-				RequestDispatcher rs = request.getRequestDispatcher("index.html");
-				rs.include(request, response);
-			}
-		
+
+		if (Validate.checkUser(first, last)) {
+			//save user and their forms onto the session here
+			userStuff us = new userStuff();
+			userBean user = us.storeUser(first, last, conn);
+			//List<formBean> listForm = us.storeForms(first, last, conn);
+			
+			//user.getListForm().addAll(listForm);
+			
+			
+			rs = request.getRequestDispatcher("userhome.html");
+			rs.forward(request, response);
+		} else {
+			out.println("Username or Password Incorrect");
+			rs = request.getRequestDispatcher("index.html");
+			rs.include(request, response);
+		}
+
 	}
 
 }
