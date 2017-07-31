@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.test.bean.userBean;
 import com.test.utility.Validate;
@@ -68,7 +69,7 @@ public class Form extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		formStuff form = new formStuff();
 		System.out.println("Cat");
-		userBean user = (userBean) request.getAttribute("user");
+		//userBean user = (userBean) request.getAttribute("user");
 		String grade = request.getParameter("GRADE");
 		int trueGrade = Integer.parseInt(grade);
 		String justification = request.getParameter("JUSTIFICATION");
@@ -85,7 +86,12 @@ public class Form extends HttpServlet {
 		System.out.println(description);
 		System.out.println(event);
 		
-		form.submitForm(conn, user, trueGrade, justification, date, location, description, trueCost);
+		//HttpSession session = request.getSession();
+		//userBean person = (userBean)
+				System.out.println(request.getSession().getAttribute("loggedin").toString());//session.getAttribute("loggedinuser");
+		//System.out.println(person.toString());
+		
+		form.submitForm(conn, (userBean) request.getSession().getAttribute("loggedin"), trueGrade, justification, date, location, description, trueCost);
 		
 		// user.getListForm().addAll(us.storeForms(first, last, conn));
 

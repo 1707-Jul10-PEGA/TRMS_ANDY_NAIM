@@ -74,10 +74,12 @@ public class Login extends HttpServlet {
 			//save user and their forms onto the session here
 			userStuff us = new userStuff();
 			userBean user = us.storeUser(first, last, conn);
-			
+			//HttpSession session = request.getSession();
+		//	session.setAttribute("loggedinuser", user);
+			request.getSession().setAttribute("loggedin",user);
 			
 			//user.getListForm().addAll(us.storeForms(first, last, conn));
-			request.setAttribute("user", user);
+			//request.setAttribute("user", user);
 			
 			
 			//rs = request.getRequestDispatcher("userView.html");
