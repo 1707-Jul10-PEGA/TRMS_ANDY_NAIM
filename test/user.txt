@@ -1,0 +1,1 @@
+{"id":2,"position":"EMPLOYEE","firstname":"notblake","lastname":"notblake","balance":1000.0,"department":"BENCO","supervisorFirst":"john","supervisorLast":"smith"}
